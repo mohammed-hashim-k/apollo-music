@@ -2,13 +2,15 @@ import React from 'react';
 import { CircularProgress, makeStyles } from '@material-ui/core';
 import { Card, CardMedia, CardContent, Typography, IconButton, CardActions } from '@material-ui/core';
 import { PlayArrow, Save } from '@material-ui/icons';
+import { useQuery } from '@apollo/react-hooks';
+import { GET_SONGS } from '../graphql/queries';
 function SongList() {
-	let loading = false;
-	const song = {
-		title: 'call',
-		artist: 'hash',
-		thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/TEIDE.JPG/1024px-TEIDE.JPG'
-	};
+	const { data, loading, error } = useQuery(GET_SONGS);
+	// const song = {
+	// 	title: 'call',
+	// 	artist: 'hash',
+	// 	thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/TEIDE.JPG/1024px-TEIDE.JPG'
+	// };
 	if (loading) {
 		return (
 			<div
@@ -23,7 +25,10 @@ function SongList() {
 			</div>
 		);
 	}
-	return <div>{Array.from({ length: 10 }, () => song).map((song, i) => <Song key={i} song={song} />)}</div>;
+
+	if (error) <div>error fetching songs</div>;
+
+	return <div>{data.songs.map((song) => <Song key={song.id} song={song} />)}</div>;
 }
 
 const useStyles = makeStyles((theme) => ({
